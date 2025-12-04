@@ -1,0 +1,108 @@
+% SBC Article Template
+% Official template from Sociedade Brasileira de Computacao (SBC)
+% Based on the official guidelines
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sbc-template}[2024/01/01 SBC Article Template]
+
+% Page layout
+\RequirePackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm]{geometry}
+
+% Fonts - Times
+\RequirePackage{times}
+
+% Language support
+\RequirePackage[T1]{fontenc}
+
+% Citations
+\RequirePackage{cite}
+
+% Font settings
+\renewcommand{\normalsize}{\fontsize{12pt}{14pt}\selectfont}
+\renewcommand{\small}{\fontsize{11pt}{13pt}\selectfont}
+\renewcommand{\footnotesize}{\fontsize{10pt}{12pt}\selectfont}
+\renewcommand{\large}{\fontsize{14pt}{16pt}\selectfont}
+\renewcommand{\Large}{\fontsize{16pt}{18pt}\selectfont}
+\renewcommand{\LARGE}{\fontsize{18pt}{20pt}\selectfont}
+
+% Paragraph settings
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{6pt}
+
+% Section formatting
+\RequirePackage{titlesec}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\itshape}{\thesubsubsection}{0.5em}{}
+
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+\titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
+
+% Institution command
+\newcounter{insession}
+\setcounter{insession}{0}
+\newcommand{\inst}[1]{\textsuperscript{#1}}
+
+% Address command
+\newcommand{\address}[1]{\gdef\@address{#1}}
+\newcommand{\@address}{}
+
+% Email command
+\newcommand{\email}[1]{\texttt{#1}}
+
+% Title formatting
+\makeatletter
+\renewcommand{\maketitle}{%
+  \newpage
+  \null
+  \begin{center}%
+    {\LARGE\bfseries \@title \par}%
+    \vskip 1.5em%
+    {\large
+      \lineskip .5em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+    \vskip 0.5em%
+    {\normalsize \@address \par}%
+  \end{center}%
+  \par
+  \vskip 1.5em
+}
+\makeatother
+
+% Abstract environment
+\renewenvironment{abstract}{%
+  \small
+  \begin{center}%
+    {\bfseries Abstract.}%
+  \end{center}%
+  \quotation\noindent
+}{%
+  \endquotation
+  \vskip 1em
+}
+
+% Resumo environment  
+\newenvironment{resumo}{%
+  \small
+  \begin{center}%
+    {\bfseries Resumo.}%
+  \end{center}%
+  \quotation\noindent
+}{%
+  \endquotation
+  \vskip 1em
+}
+
+% Figure and table captions
+\RequirePackage{caption}
+\captionsetup{font=small,labelfont=bf,format=hang}
+\captionsetup[table]{position=top}
+\captionsetup[figure]{position=bottom}
+
+% Bibliography style
+\bibliographystyle{sbc}
+
+\endinput
