@@ -111,14 +111,14 @@ void compute_similarity_matrix_mpi(int rank, int size) {
     
     // Calcular similaridades para a faixa deste processo
     for (int i = start_item; i < end_item && i < num_items; i++) {
-        for (int j = i; j < num_items; j++) {
-            if (i == j) {
-                similarity_matrix[i][j] = 1.0;
-            } else {
-                float sim = cosine_similarity(i, j);
-                similarity_matrix[i][j] = sim;
-                similarity_matrix[j][i] = sim;
-            }
+        // Diagonal: sempre 1.0
+        similarity_matrix[i][i] = 1.0;
+        
+        // Triângulo superior (j > i): calcula e armazena
+        for (int j = i + 1; j < num_items; j++) {
+            float sim = cosine_similarity(i, j);
+            similarity_matrix[i][j] = sim;
+            // NÃO preenche [j][i] aqui para evitar race condition!
         }
         
         if ((i + 1) % 100 == 0) {
@@ -131,17 +131,23 @@ void compute_similarity_matrix_mpi(int rank, int size) {
     
     // Coletar resultados parciais no processo 0
     if (rank == 0) {
-        // Processo 0 já tem sua parte
+        // Processo 0 já tem sua parte calculada
         // Receber partes dos outros processos
         for (int src = 1; src < size; src++) {
             int src_start = src * items_per_process + (src < remainder ? src : remainder);
             int src_end = src_start + items_per_process + (src < remainder ? 1 : 0);
-            int src_items = src_end - src_start;
             
             // Receber cada linha calculada pelo processo src
             for (int i = src_start; i < src_end && i < num_items; i++) {
                 MPI_Recv(similarity_matrix[i], num_items, MPI_FLOAT, src, i, 
                         MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            }
+        }
+        
+        // Reconstruir simetria da matriz: [j][i] = [i][j]
+        for (int i = 0; i < num_items; i++) {
+            for (int j = i + 1; j < num_items; j++) {
+                similarity_matrix[j][i] = similarity_matrix[i][j];
             }
         }
     } else {
