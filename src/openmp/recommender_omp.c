@@ -118,7 +118,7 @@ void compute_similarity_matrix(int num_threads) {
             }
         }
         
-        // Progresso (apenas thread 0 imprime)
+        // Progresso
         #pragma omp critical
         {
             if ((i + 1) % 100 == 0) {
