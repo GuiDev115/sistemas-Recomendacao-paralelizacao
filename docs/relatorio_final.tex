@@ -176,12 +176,16 @@ A etapa computacionalmente intensiva é o cálculo da matriz de similaridade (li
 Utiliza-se o pragma \texttt{\#pragma omp parallel for} no loop externo do cálculo de similaridade. Cada thread processa um subconjunto de itens, com escalonamento dinâmico para balanceamento de carga:
 
 \begin{verbatim}
-#pragma omp parallel for schedule(dynamic) 
-    collapse(2)
+#pragma omp parallel for schedule(dynamic, 10) shared(similarity_matrix)
 for (int i = 0; i < num_items; i++) {
-    for (int j = i+1; j < num_items; j++) {
-        similarity_matrix[i][j] = 
-            cosine_similarity(i, j);
+    for (int j = i; j < num_items; j++) {
+        if (i == j) {
+            similarity_matrix[i][j] = 1.0;
+        } else {
+            float sim = cosine_similarity(i, j);
+            similarity_matrix[i][j] = sim;
+            similarity_matrix[j][i] = sim;
+        }
     }
 }
 \end{verbatim}
@@ -282,12 +286,15 @@ Para cada dataset, avaliou-se o desempenho com 1, 2, 4 e 8 threads/processos.
 A implementação sequencial serve como baseline para comparação. O código principal consiste em:
 
 \begin{verbatim}
-// Cálculo da matriz de similaridade
 for (int i = 0; i < num_items; i++) {
-    for (int j = i + 1; j < num_items; j++) {
-        float sim = cosine_similarity(i, j);
-        similarity_matrix[i][j] = sim;
-        similarity_matrix[j][i] = sim;
+    for (int j = i; j < num_items; j++) {
+        if (i == j) {
+            similarity_matrix[i][j] = 1.0;
+        } else {
+            float sim = cosine_similarity(i, j);
+            similarity_matrix[i][j] = sim;
+            similarity_matrix[j][i] = sim;  // Matriz simétrica
+        }
     }
 }
 \end{verbatim}
@@ -296,44 +303,49 @@ A função \texttt{cosine\_similarity} itera sobre todos os usuários, calculand
 
 \begin{verbatim}
 float cosine_similarity(int item1, int item2) {
-    float dot = 0.0, norm1 = 0.0, norm2 = 0.0;
-    
-    for (int u = 0; u < num_users; u++) {
-        float r1 = ratings_matrix[u][item1];
-        float r2 = ratings_matrix[u][item2];
-        dot += r1 * r2;
-        norm1 += r1 * r1;
-        norm2 += r2 * r2;
+    float dot_product = 0.0;
+    float norm1 = 0.0;
+    float norm2 = 0.0;
+
+    for (int user = 0; user < num_users; user++) {
+        float r1 = ratings_matrix[user][item1];
+        float r2 = ratings_matrix[user][item2];
+        
+        if (r1 > 0 && r2 > 0) {
+            dot_product += r1 * r2;
+            norm1 += r1 * r1;
+            norm2 += r2 * r2;
+        }
     }
-    
-    if (norm1 == 0.0 || norm2 == 0.0) return 0.0;
-    return dot / (sqrt(norm1) * sqrt(norm2));
+
+    if (norm1 == 0.0 || norm2 == 0.0) {
+        return 0.0;
+    }
+
+    return dot_product / (sqrt(norm1) * sqrt(norm2));
 }
 \end{verbatim}
 
 \subsection{Versão OpenMP}
 
-A paralelização com OpenMP é direta, utilizando-se a diretiva \texttt{parallel for}. Duas otimizações foram aplicadas:
-
-\begin{enumerate}
-\item \textbf{Escalonamento Dinâmico}: Devido ao loop triangular, as iterações têm cargas diferentes. O escalonamento dinâmico melhora o balanceamento.
-
-\item \textbf{Collapse}: A diretiva \texttt{collapse(2)} permite que OpenMP paraleliza ambos os loops, aumentando o número de iterações disponíveis.
-\end{enumerate}
+A paralelização com OpenMP é direta, utilizando-se a diretiva \texttt{parallel for}. Foi aplicado o escalonamento dinâmico, pois, devido ao loop triangular, as iterações têm cargas diferentes. O escalonamento dinâmico melhora o balanceamento.
 
 \begin{verbatim}
-#pragma omp parallel for schedule(dynamic, 10) \
-        collapse(2) shared(similarity_matrix)
+#pragma omp parallel for schedule(dynamic, 10) shared(similarity_matrix)
 for (int i = 0; i < num_items; i++) {
-    for (int j = i + 1; j < num_items; j++) {
-        float sim = cosine_similarity(i, j);
-        similarity_matrix[i][j] = sim;
-        similarity_matrix[j][i] = sim;
+    for (int j = i; j < num_items; j++) {
+        if (i == j) {
+            similarity_matrix[i][j] = 1.0;
+        } else {
+            float sim = cosine_similarity(i, j);
+            similarity_matrix[i][j] = sim;
+            similarity_matrix[j][i] = sim;
+        }
     }
 }
 \end{verbatim}
 
-O número de threads é controlado via variável de ambiente \texttt{OMP\_NUM\_THREADS}.
+O número de threads é controlado via variável \texttt{num\_threads}.
 
 \subsection{Versão Pthreads}
 
@@ -621,7 +633,7 @@ O comportamento de escalabilidade varia entre as implementações:
 \begin{itemize}
 \item \textbf{Ambiente}: Experimentos limitados a um único sistema multi-core. Resultados em clusters podem diferir significativamente.
 
-\item \textbf{Datasets}: Uso de dados sintéticos. Dados reais apresentam sparsidade e distribuição diferentes.
+\item \textbf{Datasets}: Uso de dados sintéticos. Dados reais apresentam esparsidade e distribuição diferentes.
 
 \item \textbf{Algoritmo}: Análise restrita a filtragem colaborativa item-item. Outros algoritmos (SVD, deep learning) podem apresentar características diferentes.
 
