@@ -1,0 +1,35 @@
+\begin{thebibliography}{10}
+G.~M. Amdahl, Validity of the single processor approach to achieving large
+  scale computing capabilities, \textit{In }Proceedings of the April 18-20,
+  1967, Spring Joint Computer Conference, pages 483--485, 1967, ACM.
+D.~R. Butenhof, \textit{Programming with POSIX Threads}, Addison-Wesley
+  Professional, Boston, MA, 1997.
+R.~Chandra, L.~Dagum, D.~Kohr, R.~Menon, D.~Maydan and J.~McDonald,
+  \textit{Parallel Programming in OpenMP}, Morgan Kaufmann, San Francisco, CA,
+  2001.
+R.~Gemulla, E.~Nijkamp, P.~J. Haas and Y.~Sismanis, Large-scale matrix
+  factorization with distributed stochastic gradient descent, \textit{In
+  }Proceedings of the 17th ACM SIGKDD International Conference on Knowledge
+  Discovery and Data Mining, pages 69--77, 2011, ACM.
+W.~Gropp, E.~Lusk and A.~Skjellum, \textit{Using MPI: Portable Parallel
+  Programming with the Message-Passing Interface}, 2nd edition, MIT Press,
+  Cambridge, MA, 1999.
+Y.~Koren and R.~Bell, \textit{Advances in collaborative filtering}, Recommender
+  Systems Handbook:77--118, 2015.
+P.~Pacheco, \textit{An Introduction to Parallel Programming}, Morgan Kaufmann,
+  Burlington, MA, 2011.
+F.~Ricci, L.~Rokach and B.~Shapira, \textit{Recommender Systems Handbook},
+  Springer, New York, NY, 2011.
+B.~Sarwar, G.~Karypis, J.~Konstan and J.~Riedl, Item-based collaborative
+  filtering recommendation algorithms, \textit{In }Proceedings of the 10th
+  International Conference on World Wide Web, pages 285--295, 2001, ACM.
+S.~Verma, R.~Kumar and A.~Singh, A comparative study of OpenMP and MPI for
+  parallel machine learning algorithms, \textit{In }2018 International
+  Conference on Advances in Computing, Communications and Informatics (ICACCI),
+  pages 1524--1530, 2018, IEEE.
+Y.~Zhou, D.~Wilkinson, R.~Schreiber and R.~Pan, Large-scale parallel
+  collaborative filtering for the netflix prize, \textit{In }International
+  Conference on Algorithmic Applications in Management, pages 337--348, 2008,
+  Springer.
+
+\end{thebibliography}

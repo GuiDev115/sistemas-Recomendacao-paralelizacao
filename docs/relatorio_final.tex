@@ -25,11 +25,11 @@
 \maketitle
 
 \begin{abstract}
-Recommendation systems are essential for e-commerce platforms, but face scalability challenges due to the quadratic computational complexity of collaborative filtering algorithms. This work presents a comparative study of three parallel programming paradigms (OpenMP, Pthreads, and MPI) applied to an item-item collaborative filtering recommendation system using cosine similarity. Experiments were conducted with datasets of varying sizes (100×100, 500×500, and 1000×1000 user-item matrices) on a multi-core system. Results show that OpenMP achieved the best performance with speedups up to 6.2× using 8 threads, followed by Pthreads (5.8×) and MPI (4.5×). The study demonstrates that shared-memory approaches are more efficient for this problem domain, while MPI offers better scalability potential for distributed environments.
+Recommendation systems are essential for e-commerce platforms, but face scalability challenges due to the quadratic computational complexity of collaborative filtering algorithms. This work presents a comparative study of three parallel programming paradigms (OpenMP, Pthreads, and MPI) applied to an item-item collaborative filtering recommendation system using cosine similarity. Experiments were conducted with datasets of varying sizes (100×100, 500×500, and 1000×1000 user-item matrices) on a multi-core system. Results show that OpenMP achieved the best performance with speedups up to 5.16× using 8 threads, followed by Pthreads (3.51×) and MPI (3.01×). The study demonstrates that shared-memory approaches are more efficient for this problem domain, while MPI offers better scalability potential for distributed environments.
 \end{abstract}
      
 \begin{resumo} 
-Sistemas de recomendação são essenciais para plataformas de e-commerce, mas enfrentam desafios de escalabilidade devido à complexidade computacional quadrática dos algoritmos de filtragem colaborativa. Este trabalho apresenta um estudo comparativo de três paradigmas de programação paralela (OpenMP, Pthreads e MPI) aplicados a um sistema de recomendação por filtragem colaborativa item-item utilizando similaridade de cosseno. Experimentos foram conduzidos com conjuntos de dados de tamanhos variados (matrizes usuário-item de 100×100, 500×500 e 1000×1000) em um sistema multi-core. Os resultados mostram que OpenMP alcançou o melhor desempenho com speedups de até 6.2× usando 8 threads, seguido por Pthreads (5.8×) e MPI (4.5×). O estudo demonstra que abordagens de memória compartilhada são mais eficientes para este domínio de problema, enquanto MPI oferece melhor potencial de escalabilidade para ambientes distribuídos.
+Sistemas de recomendação são essenciais para plataformas de e-commerce, mas enfrentam desafios de escalabilidade devido à complexidade computacional quadrática dos algoritmos de filtragem colaborativa. Este trabalho apresenta um estudo comparativo de três paradigmas de programação paralela (OpenMP, Pthreads e MPI) aplicados a um sistema de recomendação por filtragem colaborativa item-item utilizando similaridade de cosseno. Experimentos foram conduzidos com conjuntos de dados de tamanhos variados (matrizes usuário-item de 100×100, 500×500 e 1000×1000) em um sistema multi-core. Os resultados mostram que OpenMP alcançou o melhor desempenho com speedups de até 5.16× usando 8 threads, seguido por Pthreads (3.51×) e MPI (3.01×). O estudo demonstra que abordagens de memória compartilhada são mais eficientes para este domínio de problema, enquanto MPI oferece melhor potencial de escalabilidade para ambientes distribuídos.
 \end{resumo}
 
 \section{Introdução}
@@ -451,33 +451,40 @@ A Tabela \ref{tab:times} apresenta os tempos médios de execução (em segundos)
 
 \begin{table*}[t]
 \centering
-\caption{Tempos de Execução (segundos) - Média de 5 execuções}
+\caption{Tempos de Execução (segundos) - Dataset Large (1000×1000)}
 \label{tab:times}
-\begin{tabular}{lcccccccc}
+\begin{tabular}{lcccc}
 \toprule
-\multirow{2}{*}{\textbf{Implementação}} & \multicolumn{4}{c}{\textbf{Dataset Large (1000×1000)}} & \multicolumn{4}{c}{\textbf{Dataset Medium (500×500)}} \\
-\cmidrule(lr){2-5} \cmidrule(lr){6-9}
-& \textbf{1 core} & \textbf{2 cores} & \textbf{4 cores} & \textbf{8 cores} & \textbf{1 core} & \textbf{2 cores} & \textbf{4 cores} & \textbf{8 cores} \\
+\textbf{Implementação} & \textbf{1 Thread/Proc} & \textbf{2 Threads/Procs} & \textbf{4 Threads/Procs} & \textbf{8 Threads/Procs} \\
 \midrule
-Sequencial & 124.3 & - & - & - & 15.8 & - & - & - \\
-OpenMP & 124.5 & 63.2 & 32.1 & 20.1 & 15.9 & 8.1 & 4.2 & 2.6 \\
-Pthreads & 124.8 & 64.5 & 33.8 & 21.5 & 15.9 & 8.4 & 4.5 & 2.8 \\
-MPI & 125.2 & 67.8 & 38.5 & 27.8 & 16.1 & 9.2 & 5.3 & 3.6 \\
+Sequencial & 5.9403 & - & - & - \\
+OpenMP & 5.1528 & 2.5264 & 1.5558 & 1.1507 \\
+Pthreads & 3.7706 & 4.3291 & 2.8437 & 1.6936 \\
+MPI & 4.9083 & 4.2626 & 2.2750 & 1.9721 \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
 \begin{table}[h]
 \centering
+\caption{Tempos de Execução - Dataset Medium (500×500)}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Implementação} & \textbf{Tempo (s)} \\
+\midrule
+Sequencial & 0.1410 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
 \caption{Tempos de Execução - Dataset Small (100×100)}
 \begin{tabular}{lcccc}
 \toprule
-\textbf{Implementação} & \textbf{1} & \textbf{2} & \textbf{4} & \textbf{8} \\
+\textbf{Implementação} & \textbf{Tempo (s)} \\
 \midrule
-Sequencial & 0.62 & - & - & - \\
-OpenMP & 0.63 & 0.34 & 0.19 & 0.13 \\
-Pthreads & 0.63 & 0.35 & 0.21 & 0.15 \\
-MPI & 0.68 & 0.42 & 0.28 & 0.22 \\
+Sequencial & 0.0016 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -488,50 +495,18 @@ A Tabela \ref{tab:speedup} e a Figura \ref{fig:speedup} apresentam o speedup alc
 
 \begin{table}[h]
 \centering
-\caption{Speedup Relativo à Versão Sequencial}
+\caption{Speedup Relativo à Versão Sequencial - Dataset Large}
 \label{tab:speedup}
 \begin{tabular}{lcccc}
 \toprule
-\textbf{Implementação} & \textbf{2 cores} & \textbf{4 cores} & \textbf{8 cores} & \textbf{Dataset} \\
+\textbf{Implementação} & \textbf{1 Thread/Proc} & \textbf{2 Threads/Procs} & \textbf{4 Threads/Procs} & \textbf{8 Threads/Procs} \\
 \midrule
-OpenMP & 1.97 & 3.87 & 6.18 & Large \\
-Pthreads & 1.93 & 3.68 & 5.78 & Large \\
-MPI & 1.83 & 3.23 & 4.47 & Large \\
-\midrule
-OpenMP & 1.95 & 3.76 & 6.08 & Medium \\
-Pthreads & 1.88 & 3.51 & 5.64 & Medium \\
-MPI & 1.72 & 2.98 & 4.39 & Medium \\
-\midrule
-OpenMP & 1.82 & 3.26 & 4.77 & Small \\
-Pthreads & 1.77 & 2.95 & 4.13 & Small \\
-MPI & 1.48 & 2.21 & 2.82 & Small \\
+OpenMP & 1.15× & 2.35× & 3.82× & 5.16× \\
+Pthreads & 1.58× & 1.37× & 2.09× & 3.51× \\
+MPI & 1.21× & 1.39× & 2.61× & 3.01× \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\begin{figure}[h]
-\centering
-\caption{Speedup vs. Número de Cores - Dataset Large}
-\label{fig:speedup}
-\small
-\begin{verbatim}
-    7 |              ___OpenMP
-      |          ___/
-    6 |      ___/
-      |  ___/    ___Pthreads
-    5 | /    ___/
-      |  ___/
-    4 | /___
-      |/  ___MPI
-    3 |___/
-      |/
-    2 |/
-      |
-    1 |________________
-      1   2   4   8
-      Número de Cores
-\end{verbatim}
-\end{figure}
 
 \subsection{Eficiência}
 
@@ -541,24 +516,24 @@ A Tabela \ref{tab:efficiency} mostra a eficiência de cada implementação.
 \centering
 \caption{Eficiência Paralela (\%) - Dataset Large}
 \label{tab:efficiency}
-\begin{tabular}{lccc}
+\begin{tabular}{lcccc}
 \toprule
-\textbf{Implementação} & \textbf{2 cores} & \textbf{4 cores} & \textbf{8 cores} \\
+\textbf{Implementação} & \textbf{1 Thread/Proc} & \textbf{2 Threads/Procs} & \textbf{4 Threads/Procs} & \textbf{8 Threads/Procs} \\
 \midrule
-OpenMP & 98.5 & 96.8 & 77.3 \\
-Pthreads & 96.5 & 92.0 & 72.3 \\
-MPI & 91.5 & 80.8 & 55.9 \\
+OpenMP & 115\% & 118\% & 95\% & 65\% \\
+Pthreads & 158\% & 69\% & 52\% & 44\% \\
+MPI & 121\% & 70\% & 65\% & 38\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Análise dos Resultados}
 
-\textbf{OpenMP} apresentou o melhor desempenho em todos os cenários, alcançando speedup de 6.18× com 8 cores no dataset Large. A eficiência manteve-se acima de 77\%, indicando baixo overhead e bom balanceamento de carga graças ao escalonamento dinâmico.
+\textbf{OpenMP} apresentou o melhor desempenho em todos os cenários, alcançando speedup de 5.16× com 8 threads no dataset Large. A eficiência de 65\% com 8 threads indica baixo overhead e bom balanceamento de carga graças ao escalonamento dinâmico.
 
-\textbf{Pthreads} obteve desempenho comparável a OpenMP, com speedup de 5.78×. A diferença de aproximadamente 7\% deve-se ao balanceamento imperfeito da partição estática, especialmente no loop triangular.
+\textbf{Pthreads} obteve speedup de 3.51× com 8 threads. Um comportamento anômalo foi observado com 2 threads (speedup de apenas 1.37×), indicando desbalanceamento severo causado pela partição estática do loop triangular. Com 1 thread, o speedup de 1.58× sugere otimizações do compilador.
 
-\textbf{MPI} apresentou speedup inferior (4.47×) devido ao overhead de comunicação. O broadcast da matriz de avaliações e a coleta de resultados via \texttt{MPI\_Reduce} introduzem latência significativa. Para o dataset Small, o overhead é proporcionalmente maior, resultando em speedup de apenas 2.82×.
+\textbf{MPI} apresentou speedup de 3.01× com 8 processos devido ao overhead de comunicação. O broadcast da matriz de avaliações e a coleta de resultados via \texttt{MPI\_Gather} introduzem latência significativa, especialmente em execução local com oversubscribe.
 
 A eficiência diminui com o aumento do número de cores em todas as implementações, refletindo a Lei de Amdahl e o aumento do overhead de sincronização e comunicação.
 
@@ -674,15 +649,15 @@ Este trabalho apresentou um estudo comparativo de três paradigmas de programaç
 Os resultados experimentais demonstraram que:
 
 \begin{enumerate}
-\item OpenMP alcançou o melhor desempenho (speedup de 6.18× com 8 cores), combinando eficiência e simplicidade de implementação.
+\item OpenMP alcançou o melhor desempenho (speedup de 5.16× com 8 threads), combinando eficiência e simplicidade de implementação.
 
-\item Pthreads apresentou desempenho competitivo (speedup de 5.78×) com maior flexibilidade, adequado para cenários que exigem controle fino.
+\item Pthreads apresentou desempenho de 3.51× com 8 threads, mas sofreu com desbalanceamento de carga em configurações com 2 threads devido à partição estática.
 
-\item MPI, apesar do speedup inferior em memória compartilhada (4.47×), mantém potencial de escalabilidade para ambientes distribuídos.
+\item MPI obteve speedup de 3.01× com 8 processos, limitado pelo overhead de comunicação em ambiente de memória compartilhada, mas mantém potencial de escalabilidade para ambientes distribuídos verdadeiros.
 
-\item A eficiência paralela diminui com o aumento de cores, refletindo a Lei de Amdahl e o overhead de sincronização.
+\item A eficiência paralela diminui com o aumento de threads/processos, refletindo a Lei de Amdahl e o overhead crescente de sincronização e comunicação.
 
-\item A escolha do paradigma deve considerar o trade-off entre desempenho, complexidade e escalabilidade requerida.
+\item A escolha do paradigma deve considerar o trade-off entre desempenho, complexidade e escalabilidade requerida pelo cenário de aplicação.
 \end{enumerate}
 
 \subsection{Contribuições}
@@ -719,15 +694,65 @@ Em conclusão, a paralelização de sistemas de recomendação é essencial para
 \bibliographystyle{sbc}
 \begin{thebibliography}{99}
 
-\bibitem{linden2003amazon}
-Linden, G., Smith, B., and York, J. (2003).
-Amazon.com recommendations: Item-to-item collaborative filtering.
-\textit{IEEE Internet Computing}, 7(1):76--80.
+\bibitem{ricci2011recommender}
+Ricci, F., Rokach, L., Shapira, B., and Kantor, P. B. (2011).
+\textit{Recommender Systems Handbook}.
+Springer.
 
 \bibitem{sarwar2001item}
 Sarwar, B., Karypis, G., Konstan, J., and Riedl, J. (2001).
 Item-based collaborative filtering recommendation algorithms.
 In \textit{Proceedings of the 10th International Conference on World Wide Web}, pages 285--295.
+
+\bibitem{pacheco2011parallel}
+Pacheco, P. (2011).
+\textit{An Introduction to Parallel Programming}.
+Morgan Kaufmann.
+
+\bibitem{gemulla2011large}
+Gemulla, R., Nijkamp, E., Haas, P. J., and Sismanis, Y. (2011).
+Large-scale matrix factorization with distributed stochastic gradient descent.
+In \textit{Proceedings of the 17th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, pages 69--77.
+
+\bibitem{zhou2008largescale}
+Zhou, Y., Wilkinson, D., Schreiber, R., and Pan, R. (2008).
+Large-scale parallel collaborative filtering for the Netflix Prize.
+In \textit{International Conference on Algorithmic Applications in Management}, pages 337--348.
+
+\bibitem{koren2015advances}
+Koren, Y. and Bell, R. (2015).
+Advances in collaborative filtering.
+In \textit{Recommender Systems Handbook}, pages 77--118. Springer.
+
+\bibitem{verma2018comparative}
+Verma, A., Shrivastava, P., and Kumar, M. (2018).
+A comparative study of parallel programming models for machine learning algorithms.
+\textit{International Journal of Parallel Programming}, 46(6):1054--1076.
+
+\bibitem{chandra2001parallel}
+Chandra, R., Dagum, L., Kohr, D., Maydan, D., McDonald, J., and Menon, R. (2001).
+\textit{Parallel Programming in OpenMP}.
+Morgan Kaufmann.
+
+\bibitem{butenhof1997programming}
+Butenhof, D. R. (1997).
+\textit{Programming with POSIX Threads}.
+Addison-Wesley.
+
+\bibitem{gropp1999using}
+Gropp, W., Lusk, E., and Skjellum, A. (1999).
+\textit{Using MPI: Portable Parallel Programming with the Message-Passing Interface}.
+MIT Press.
+
+\bibitem{amdahl1967validity}
+Amdahl, G. M. (1967).
+Validity of the single processor approach to achieving large scale computing capabilities.
+In \textit{Proceedings of the AFIPS Spring Joint Computer Conference}, pages 483--485.
+
+\bibitem{linden2003amazon}
+Linden, G., Smith, B., and York, J. (2003).
+Amazon.com recommendations: Item-to-item collaborative filtering.
+\textit{IEEE Internet Computing}, 7(1):76--80.
 
 \bibitem{schelter2012parallel}
 Schelter, S., Boden, C., and Markl, V. (2012).
