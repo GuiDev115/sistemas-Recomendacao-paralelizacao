@@ -34,7 +34,6 @@ typedef struct {
     int end_item;
 } ThreadData;
 
-// Variáveis globais
 float ratings_matrix[MAX_USERS][MAX_ITEMS];
 int num_users = 0;
 int num_items = 0;
@@ -44,9 +43,6 @@ float similarity_matrix[MAX_ITEMS][MAX_ITEMS];
 int num_threads_global = 1;
 pthread_mutex_t progress_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-/**
- * Retorna o tempo atual em segundos
- */
 double get_time() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
@@ -182,9 +178,7 @@ void compute_similarity_matrix(int num_threads) {
     }
 }
 
-/**
- * Compara itens por similaridade (para qsort)
- */
+
 int compare_similarity(const void *a, const void *b) {
     ItemSimilarity *ia = (ItemSimilarity *)a;
     ItemSimilarity *ib = (ItemSimilarity *)b;
@@ -194,9 +188,6 @@ int compare_similarity(const void *a, const void *b) {
     return 0;
 }
 
-/**
- * Gera recomendações para um usuário específico
- */
 void recommend_for_user(int user_id, int top_n) {
     float predictions[MAX_ITEMS];
     memset(predictions, 0, sizeof(predictions));
@@ -224,7 +215,7 @@ void recommend_for_user(int user_id, int top_n) {
         }
     }
 
-    // Encontrar top N
+
     ItemSimilarity recommendations[MAX_ITEMS];
     int count = 0;
     
@@ -246,9 +237,6 @@ void recommend_for_user(int user_id, int top_n) {
     }
 }
 
-/**
- * Função principal
- */
 int main(int argc, char *argv[]) {
     if (argc < 3) {
         fprintf(stderr, "Uso: %s <arquivo_avaliacoes> <num_threads>\n", argv[0]);
@@ -266,15 +254,12 @@ int main(int argc, char *argv[]) {
     printf("=== Sistema de Recomendação (Pthreads) ===\n");
     printf("Threads: %d\n\n", num_threads);
 
-    // Carregar dados
     if (load_ratings(argv[1]) != 0) {
         return 1;
     }
 
-    // Medir tempo de execução
     double start = get_time();
 
-    // Calcular matriz de similaridade
     compute_similarity_matrix(num_threads);
 
     double end = get_time();
@@ -285,7 +270,6 @@ int main(int argc, char *argv[]) {
     printf("Número de threads: %d\n", num_threads);
     printf("Número de comparações: %d\n", (num_items * (num_items - 1)) / 2);
 
-    // Gerar recomendações
     printf("\n=== Exemplos de Recomendações ===\n");
     recommend_for_user(0, TOP_K);
     recommend_for_user(1, TOP_K);

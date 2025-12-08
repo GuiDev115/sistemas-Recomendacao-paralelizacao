@@ -27,18 +27,13 @@ typedef struct {
     float similarity;
 } ItemSimilarity;
 
-// Matriz de avaliações (usuário x item)
 float ratings_matrix[MAX_USERS][MAX_ITEMS];
 int num_users = 0;
 int num_items = 0;
 int num_ratings = 0;
 
-// Matriz de similaridade entre itens
 float similarity_matrix[MAX_ITEMS][MAX_ITEMS];
 
-/**
- * Carrega as avaliações de um arquivo
- */
 int load_ratings(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -118,7 +113,6 @@ void compute_similarity_matrix(int num_threads) {
             }
         }
         
-        // Progresso
         #pragma omp critical
         {
             if ((i + 1) % 100 == 0) {
@@ -129,9 +123,7 @@ void compute_similarity_matrix(int num_threads) {
     }
 }
 
-/**
- * Compara itens por similaridade (para qsort)
- */
+
 int compare_similarity(const void *a, const void *b) {
     ItemSimilarity *ia = (ItemSimilarity *)a;
     ItemSimilarity *ib = (ItemSimilarity *)b;
@@ -197,9 +189,6 @@ void recommend_for_user(int user_id, int top_n, int num_threads) {
     }
 }
 
-/**
- * Função principal
- */
 int main(int argc, char *argv[]) {
     if (argc < 3) {
         fprintf(stderr, "Uso: %s <arquivo_avaliacoes> <num_threads>\n", argv[0]);
@@ -215,7 +204,6 @@ int main(int argc, char *argv[]) {
     printf("=== Sistema de Recomendação (OpenMP) ===\n");
     printf("Threads: %d\n\n", num_threads);
 
-    // Carregar dados
     if (load_ratings(argv[1]) != 0) {
         return 1;
     }
@@ -234,7 +222,6 @@ int main(int argc, char *argv[]) {
     printf("Número de threads: %d\n", num_threads);
     printf("Número de comparações: %d\n", (num_items * (num_items - 1)) / 2);
 
-    // Gerar recomendações
     printf("\n=== Exemplos de Recomendações ===\n");
     recommend_for_user(0, TOP_K, num_threads);
     recommend_for_user(1, TOP_K, num_threads);

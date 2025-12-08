@@ -52,7 +52,8 @@ check_command mpicc || MISSING_DEPS=1
 check_command python3 || MISSING_DEPS=1
 
 # Verificar suporte a OpenMP
-if gcc -fopenmp -x c /dev/null -o /dev/null 2>/dev/null; then
+if echo '#include <omp.h>
+int main(){ return 0; }' | gcc -fopenmp -xc -o /dev/null - 2>/dev/null; then
     print_status "Suporte a OpenMP verificado"
 else
     print_error "GCC sem suporte a OpenMP!"

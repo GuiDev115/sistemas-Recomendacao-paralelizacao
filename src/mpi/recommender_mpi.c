@@ -21,18 +21,13 @@ typedef struct {
     float similarity;
 } ItemSimilarity;
 
-// Matriz de avaliações (usuário x item)
 float ratings_matrix[MAX_USERS][MAX_ITEMS];
 int num_users = 0;
 int num_items = 0;
 int num_ratings = 0;
 
-// Matriz de similaridade entre itens
 float similarity_matrix[MAX_ITEMS][MAX_ITEMS];
 
-/**
- * Carrega as avaliações de um arquivo (apenas processo 0)
- */
 int load_ratings(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -111,7 +106,6 @@ void compute_similarity_matrix_mpi(int rank, int size) {
     
     // Calcular similaridades para a faixa deste processo
     for (int i = start_item; i < end_item && i < num_items; i++) {
-        // Diagonal: sempre 1.0
         similarity_matrix[i][i] = 1.0;
         
         // Triângulo superior (j > i): calcula e armazena
@@ -132,7 +126,6 @@ void compute_similarity_matrix_mpi(int rank, int size) {
     // Coletar resultados parciais no processo 0
     if (rank == 0) {
         // Processo 0 já tem sua parte calculada
-        // Receber partes dos outros processos
         for (int src = 1; src < size; src++) {
             int src_start = src * items_per_process + (src < remainder ? src : remainder);
             int src_end = src_start + items_per_process + (src < remainder ? 1 : 0);
@@ -170,9 +163,6 @@ int compare_similarity(const void *a, const void *b) {
     return 0;
 }
 
-/**
- * Gera recomendações para um usuário (apenas processo 0)
- */
 void recommend_for_user(int user_id, int top_n) {
     float predictions[MAX_ITEMS];
     memset(predictions, 0, sizeof(predictions));
@@ -221,9 +211,6 @@ void recommend_for_user(int user_id, int top_n) {
     }
 }
 
-/**
- * Função principal
- */
 int main(int argc, char *argv[]) {
     int rank, size;
     double start_time, end_time;
@@ -280,7 +267,6 @@ int main(int argc, char *argv[]) {
         printf("Número de processos: %d\n", size);
         printf("Número de comparações: %d\n", (num_items * (num_items - 1)) / 2);
 
-        // Gerar recomendações
         printf("\n=== Exemplos de Recomendações ===\n");
         recommend_for_user(0, TOP_K);
         recommend_for_user(1, TOP_K);
